@@ -1,0 +1,6 @@
+# Task ID: 1
+# Title: Setup Project Infrastructure
+# Status: pending
+# Dependencies: None
+# Priority: high
+# Description: Initialize the project repository with React Native for mobile, React.js for web, and NestJS for backend. Configure Docker containers and CI/CD pipeline following Clean Architecture, DDD, IoC, SOLID, BDD and TDD principles. All development MUST be performed exclusively within Docker containers, never locally. Implement observability stack with Grafana, Prometheus, Loki, and Tempo for comprehensive monitoring.
