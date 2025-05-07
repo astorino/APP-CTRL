@@ -1,0 +1,87 @@
+version: '3.8'
+services:
+  dev-tools:
+    build:
+      context: ./dev-tools
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/app
+    working_dir: /app
+    tty: true
+    stdin_open: true
+    command: /bin/bash
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: appctrl
+      POSTGRES_PASSWORD: appctrl
+      POSTGRES_DB: appctrl
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+
+  backend:
+    build: ./backend
+    depends_on:
+      - postgres
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgres://appctrl:appctrl@postgres:5432/appctrl
+    networks:
+      - app-network
+
+  bff:
+    build: ./bff
+    depends_on:
+      - backend
+    volumes:
+      - ./bff:/app
+      - /app/node_modules
+    ports:
+      - "4000:4000"
+    environment:
+      NODE_ENV: development
+    networks:
+      - app-network
+
+  web:
+    build: ./frontend/web
+    volumes:
+      - ./frontend/web:/app
+      - /app/node_modules
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: development
+    networks:
+      - app-network
+
+  mobile:
+    build: ./frontend/mobile
+    volumes:
+      - ./frontend/mobile:/app
+      - /app/node_modules
+    ports:
+      - "8081:8081"
+    environment:
+      NODE_ENV: development
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
