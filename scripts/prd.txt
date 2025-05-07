@@ -1,0 +1,403 @@
+<context>
+# Overview  
+O App-Ctrl é um aplicativo de controle financeiro pessoal projetado para ajudar usuários a gerenciar suas finanças de forma eficiente e intuitiva. O aplicativo resolve o problema da falta de visibilidade e controle sobre gastos pessoais, permitindo que os usuários rastreiem suas despesas, criem orçamentos e visualizem relatórios detalhados sobre sua saúde financeira.
+
+O aplicativo é destinado a pessoas que desejam melhorar suas finanças pessoais, desde iniciantes em gestão financeira até usuários mais experientes que buscam uma ferramenta completa para organizar suas finanças. O valor principal está na simplicidade de uso combinada com recursos poderosos de análise e planejamento financeiro.
+
+# Core Features  
+1. **Registro de Transações**
+   - Permite aos usuários registrar receitas e despesas de forma rápida e fácil
+   - Suporta entrada manual de transações com campos para valor, data, categoria, descrição e método de pagamento
+   - Importante para manter um registro preciso de todas as movimentações financeiras
+   - Funciona através de uma interface simples com formulários otimizados para entrada rápida de dados
+
+2. **Categorização Automática**
+   - Classifica automaticamente as transações em categorias predefinidas e personalizáveis
+   - Utiliza aprendizado de máquina para melhorar a precisão da categorização ao longo do tempo
+   - Importante para organizar as finanças e facilitar a análise de gastos por categoria
+   - Funciona através de algoritmos de reconhecimento de padrões baseados no histórico de transações do usuário
+
+3. **Orçamentos Mensais**
+   - Permite aos usuários definir limites de gastos por categoria
+   - Fornece alertas quando os gastos se aproximam ou excedem os limites estabelecidos
+   - Importante para ajudar os usuários a controlar seus gastos e atingir metas financeiras
+   - Funciona através de um sistema de metas e acompanhamento em tempo real
+
+4. **Relatórios e Gráficos**
+   - Gera visualizações detalhadas dos gastos e receitas ao longo do tempo
+   - Oferece diferentes tipos de gráficos e relatórios (pizza, barras, linhas) para análise financeira
+   - Importante para fornecer insights sobre padrões de gastos e ajudar na tomada de decisões financeiras
+   - Funciona através de um motor de análise de dados que processa o histórico financeiro do usuário
+
+5. **Sincronização entre Dispositivos**
+   - Permite acesso aos dados financeiros em múltiplos dispositivos (smartphones, tablets, computadores)
+   - Mantém os dados atualizados em tempo real em todos os dispositivos
+   - Importante para garantir a continuidade da experiência do usuário em diferentes plataformas
+   - Funciona através de um sistema de sincronização baseado em nuvem com autenticação segura
+
+# User Experience  
+**Personas:**
+1. **Maria, 28 anos, Profissional Iniciante**
+   - Recém-formada que começou a trabalhar e quer organizar suas finanças
+   - Tem pouca experiência com gestão financeira
+   - Busca uma ferramenta simples e intuitiva para começar a controlar seus gastos
+
+2. **Carlos, 42 anos, Pai de Família**
+   - Gerencia as finanças da família
+   - Precisa acompanhar gastos de múltiplas pessoas
+   - Busca recursos avançados de categorização e relatórios
+
+3. **Ana, 35 anos, Empreendedora**
+   - Precisa separar gastos pessoais e profissionais
+   - Busca insights detalhados sobre seus padrões de gastos
+   - Valoriza a possibilidade de exportar dados para análises mais complexas
+
+**Fluxos de Usuário Principais:**
+1. **Registro de Nova Transação**
+   - Usuário abre o aplicativo
+   - Clica no botão de adicionar transação
+   - Preenche os detalhes (valor, data, categoria, descrição)
+   - Salva a transação
+   - Recebe confirmação visual e atualização do saldo
+
+2. **Configuração de Orçamento**
+   - Usuário acessa a seção de orçamentos
+   - Seleciona uma categoria
+   - Define o limite de gastos para o mês
+   - Salva as configurações
+   - Visualiza o progresso do orçamento em relação aos gastos atuais
+
+3. **Análise de Relatórios**
+   - Usuário acessa a seção de relatórios
+   - Seleciona o tipo de relatório e o período desejado
+   - Visualiza os gráficos e dados
+   - Pode filtrar por categorias específicas
+   - Exporta ou compartilha os relatórios se necessário
+
+**Considerações de UI/UX:**
+- Interface limpa e minimalista para não sobrecarregar o usuário
+- Uso de cores para indicar status financeiro (verde para positivo, vermelho para negativo)
+- Navegação intuitiva com acesso rápido às funcionalidades mais usadas
+- Feedback visual imediato para ações do usuário
+- Design responsivo para adaptação a diferentes tamanhos de tela
+</context>
+<PRD>
+# Technical Architecture  
+## Componentes do Sistema
+1. **Frontend**
+   - Interface de usuário desenvolvida com React Native para suporte multiplataforma (iOS e Android)
+   - Versão web utilizando React.js para acesso via navegador
+   - Componentes reutilizáveis para manter consistência visual
+   - Estado gerenciado com Redux para controle centralizado dos dados
+
+2. **Backend**
+   - API RESTful desenvolvida com Node.js e Express
+   - Autenticação e autorização com JWT (JSON Web Tokens)
+   - Middleware para validação de dados e tratamento de erros
+   - Serviços separados para diferentes funcionalidades (transações, orçamentos, relatórios)
+
+3. **Banco de Dados**
+   - MongoDB para armazenamento principal dos dados
+   - Estrutura de documentos flexível para acomodar diferentes tipos de transações e categorias
+   - Índices otimizados para consultas frequentes
+
+4. **Serviços de Sincronização**
+   - Sistema de sincronização em tempo real usando WebSockets
+   - Resolução de conflitos para edições simultâneas
+   - Fila de sincronização para operações offline
+
+5. **Serviço de Análise de Dados**
+   - Motor de processamento para geração de relatórios e insights
+   - Algoritmos de categorização automática
+   - Sistema de recomendações baseado em padrões de gastos
+
+## Modelos de Dados
+1. **Usuário**
+   ```
+   {
+     id: String,
+     nome: String,
+     email: String,
+     senha: String (hash),
+     dataCriacao: Date,
+     ultimoAcesso: Date,
+     configuracoes: Object
+   }
+   ```
+
+2. **Transação**
+   ```
+   {
+     id: String,
+     usuarioId: String,
+     tipo: String (receita/despesa),
+     valor: Number,
+     data: Date,
+     categoriaId: String,
+     descricao: String,
+     metodoPagamento: String,
+     tags: Array,
+     recorrente: Boolean,
+     anexos: Array
+   }
+   ```
+
+3. **Categoria**
+   ```
+   {
+     id: String,
+     usuarioId: String,
+     nome: String,
+     tipo: String (receita/despesa),
+     cor: String,
+     icone: String,
+     padrao: Boolean
+   }
+   ```
+
+4. **Orçamento**
+   ```
+   {
+     id: String,
+     usuarioId: String,
+     categoriaId: String,
+     valor: Number,
+     mes: Number,
+     ano: Number,
+     notificacoes: Array
+   }
+   ```
+
+5. **Relatório**
+   ```
+   {
+     id: String,
+     usuarioId: String,
+     tipo: String,
+     dataInicio: Date,
+     dataFim: Date,
+     filtros: Object,
+     dados: Object,
+     dataCriacao: Date
+   }
+   ```
+
+## APIs e Integrações
+1. **API de Autenticação**
+   - Registro de usuários
+   - Login/Logout
+   - Recuperação de senha
+   - Gerenciamento de sessões
+
+2. **API de Transações**
+   - CRUD de transações
+   - Filtros e buscas avançadas
+   - Importação/Exportação de dados
+
+3. **API de Categorias**
+   - CRUD de categorias
+   - Categorização automática
+   - Mesclagem e reorganização
+
+4. **API de Orçamentos**
+   - CRUD de orçamentos
+   - Alertas e notificações
+   - Análise de progresso
+
+5. **API de Relatórios**
+   - Geração de relatórios personalizados
+   - Exportação em diferentes formatos
+   - Agendamento de relatórios recorrentes
+
+6. **Integrações Potenciais**
+   - Serviços bancários via Open Banking
+   - Sistemas de reconhecimento de notas fiscais
+   - Exportação para software de contabilidade
+
+## Requisitos de Infraestrutura
+1. **Hospedagem**
+   - Serviços em nuvem escaláveis (AWS, Google Cloud ou Azure)
+   - Containers Docker para facilitar implantação
+   - CI/CD para atualizações contínuas
+
+2. **Segurança**
+   - Criptografia de dados sensíveis
+   - HTTPS para todas as comunicações
+   - Backups regulares e redundância de dados
+   - Conformidade com LGPD e outras regulamentações
+
+3. **Monitoramento**
+   - Logging centralizado
+   - Alertas para problemas de performance
+   - Análise de uso e comportamento do usuário
+
+# Development Roadmap  
+## Fase 1: MVP (Minimum Viable Product)
+1. **Funcionalidades Básicas de Transações**
+   - Registro manual de receitas e despesas
+   - Categorias predefinidas básicas
+   - Visualização de lista de transações com filtros simples
+   - Cálculo de saldo atual
+
+2. **Autenticação e Perfil de Usuário**
+   - Registro e login de usuários
+   - Perfil básico com informações pessoais
+   - Configurações de conta
+
+3. **Interface Básica**
+   - Telas principais: Dashboard, Transações, Categorias
+   - Design responsivo para mobile e web
+   - Navegação intuitiva entre as seções
+
+4. **Persistência de Dados**
+   - Armazenamento local no dispositivo
+   - Sincronização básica com o servidor
+
+## Fase 2: Recursos Essenciais
+1. **Orçamentos**
+   - Criação e gerenciamento de orçamentos mensais
+   - Alertas de limite de orçamento
+   - Visualização de progresso do orçamento
+
+2. **Relatórios Básicos**
+   - Gráficos de gastos por categoria
+   - Relatórios de fluxo de caixa
+   - Comparação mês a mês
+
+3. **Categorização Avançada**
+   - Categorias e subcategorias personalizáveis
+   - Tags para transações
+   - Início da categorização automática
+
+4. **Sincronização Completa**
+   - Sincronização em tempo real entre dispositivos
+   - Resolução de conflitos
+   - Suporte para modo offline
+
+## Fase 3: Recursos Avançados
+1. **Análise Financeira Avançada**
+   - Tendências e previsões
+   - Detecção de gastos anômalos
+   - Recomendações personalizadas
+
+2. **Transações Recorrentes**
+   - Configuração de receitas e despesas recorrentes
+   - Lembretes de pagamentos
+   - Projeção de saldo futuro
+
+3. **Importação e Exportação**
+   - Importação de extratos bancários
+   - Exportação de dados em vários formatos
+   - Integração com outros sistemas financeiros
+
+4. **Metas Financeiras**
+   - Definição de metas de economia
+   - Acompanhamento de progresso
+   - Sugestões para atingir metas mais rapidamente
+
+## Fase 4: Expansão e Refinamento
+1. **Recursos Sociais e Compartilhamento**
+   - Compartilhamento de despesas em grupo
+   - Comparação anônima com médias de gastos
+   - Dicas da comunidade
+
+2. **Inteligência Artificial**
+   - Aprimoramento da categorização automática
+   - Previsões mais precisas baseadas em ML
+   - Assistente financeiro virtual
+
+3. **Integrações Externas**
+   - Conexão com contas bancárias (Open Banking)
+   - Integração com sistemas de investimento
+   - Plugins de terceiros
+
+4. **Personalização Avançada**
+   - Temas e layouts personalizáveis
+   - Dashboards configuráveis
+   - Relatórios totalmente customizáveis
+
+# Logical Dependency Chain
+1. **Fundação (Deve ser construído primeiro)**
+   - Sistema de autenticação e gerenciamento de usuários
+   - Modelo de dados básico para transações e categorias
+   - API RESTful para operações CRUD básicas
+   - Interface de usuário com navegação principal
+
+2. **Funcionalidades Essenciais (Prioridade para MVP)**
+   - Registro e listagem de transações
+   - Categorização básica
+   - Dashboard com visão geral financeira
+   - Persistência de dados e sincronização básica
+
+3. **Expansão Incremental**
+   - Sistema de orçamentos
+   - Relatórios básicos
+   - Categorização avançada
+   - Sincronização completa entre dispositivos
+
+4. **Recursos Avançados**
+   - Análise financeira e insights
+   - Transações recorrentes e lembretes
+   - Importação/exportação de dados
+   - Metas financeiras
+
+5. **Refinamento e Otimização**
+   - Melhorias de performance
+   - Aprimoramento da experiência do usuário
+   - Recursos sociais e compartilhamento
+   - Integrações externas
+
+# Risks and Mitigations  
+## Desafios Técnicos
+1. **Sincronização em Tempo Real**
+   - **Risco**: Conflitos de dados e problemas de performance em conexões lentas
+   - **Mitigação**: Implementar sistema robusto de resolução de conflitos e suporte offline com sincronização inteligente
+
+2. **Segurança de Dados Financeiros**
+   - **Risco**: Vulnerabilidades que possam comprometer dados sensíveis dos usuários
+   - **Mitigação**: Implementar criptografia de ponta a ponta, auditorias de segurança regulares e seguir as melhores práticas de proteção de dados
+
+3. **Precisão da Categorização Automática**
+   - **Risco**: Categorização incorreta levando a relatórios imprecisos
+   - **Mitigação**: Começar com um sistema simples baseado em regras e evoluir gradualmente para soluções de ML, sempre permitindo correção manual
+
+## Definição do MVP
+1. **Escopo do MVP**
+   - **Risco**: Tentar incluir muitas funcionalidades no MVP, atrasando o lançamento
+   - **Mitigação**: Focar rigorosamente nas funcionalidades essenciais (registro de transações, categorização básica, visualização de saldo)
+
+2. **Experiência do Usuário**
+   - **Risco**: Interface complexa que dificulta a adoção por novos usuários
+   - **Mitigação**: Priorizar simplicidade e usabilidade no MVP, realizando testes com usuários reais desde o início
+
+## Restrições de Recursos
+1. **Performance em Dispositivos Mais Antigos**
+   - **Risco**: Aplicativo lento em dispositivos com recursos limitados
+   - **Mitigação**: Otimizar o código, implementar carregamento lazy e limitar processamento pesado no cliente
+
+2. **Escalabilidade do Backend**
+   - **Risco**: Problemas de performance com o aumento do número de usuários
+   - **Mitigação**: Arquitetura modular que permita escalar componentes individualmente, monitoramento proativo
+
+3. **Manutenção de Múltiplas Plataformas**
+   - **Risco**: Dificuldade em manter paridade de recursos entre web, iOS e Android
+   - **Mitigação**: Maximizar o código compartilhado através de React Native e React.js, implementar testes automatizados cross-platform
+
+# Appendix  
+## Pesquisas de Mercado
+- Análise de concorrentes principais (Mint, YNAB, Mobills)
+- Pesquisas com potenciais usuários indicam forte demanda por simplicidade e insights automáticos
+- Tendências de mercado apontam para integração com Open Banking como diferencial futuro
+
+## Especificações Técnicas Adicionais
+- Requisitos mínimos: iOS 12+, Android 7+, navegadores modernos
+- Tamanho estimado do aplicativo: <50MB
+- Consumo de dados: Baixo, com opção de sincronização apenas via Wi-Fi
+- Requisitos de armazenamento: ~100MB para dados locais (dependendo do volume de transações)
+
+## Métricas de Sucesso
+- Retenção de usuários após 30 dias > 40%
+- Tempo médio de sessão > 3 minutos
+- Frequência de uso > 3 vezes por semana
+- NPS (Net Promoter Score) > 30
+</PRD>
