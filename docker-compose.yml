@@ -1,0 +1,99 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: appctrl
+      POSTGRES_PASSWORD: appctrl
+      POSTGRES_DB: appctrl
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: ./backend
+    depends_on:
+      - postgres
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://appctrl:appctrl@postgres:5432/appctrl
+
+  bff:
+    build: ./bff
+    depends_on:
+      - backend
+    volumes:
+      - ./bff:/app
+      - /app/node_modules
+    ports:
+      - "4000:4000"
+
+  web:
+    build: ./frontend/web
+    volumes:
+      - ./frontend/web:/app
+      - /app/node_modules
+    ports:
+      - "3001:3001"
+
+  mobile:
+    build: ./frontend/mobile
+    volumes:
+      - ./frontend/mobile:/app
+      - /app/node_modules
+    ports:
+      - "8081:8081"
+
+  # Observability Stack
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./observability/prometheus:/etc/prometheus
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+
+  grafana:
+    image: grafana/grafana:latest
+    volumes:
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3002:3000"
+    depends_on:
+      - prometheus
+      - loki
+      - tempo
+
+  loki:
+    image: grafana/loki:latest
+    volumes:
+      - ./observability/loki:/etc/loki
+      - loki-data:/loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/loki-config.yml
+
+  tempo:
+    image: grafana/tempo:latest
+    volumes:
+      - ./observability/tempo:/etc/tempo
+      - tempo-data:/tmp/tempo
+    ports:
+      - "3200:3200"
+    command: -config.file=/etc/tempo/tempo-config.yml
+
+volumes:
+  postgres-data:
+  prometheus-data:
+  grafana-data:
+  loki-data:
+  tempo-data:
