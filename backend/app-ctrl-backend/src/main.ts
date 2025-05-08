@@ -1,34 +1,36 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
-  // Obter o serviço de configuração
-  const configService = app.get(ConfigService);
-  
-  // Configurar validação global
+  // Configuração de validação global
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
-      forbidNonWhitelisted: true,
       transform: true,
+      forbidNonWhitelisted: true,
     }),
   );
   
-  // Configurar CORS
+  // Configuração do Swagger
+  const config = new DocumentBuilder()
+    .setTitle('App-Ctrl API')
+    .setDescription('API para controle financeiro pessoal')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document);
+  
+  // Configuração de CORS
   app.enableCors();
   
-  // Configurar prefixo global da API
-  const apiPrefix = configService.get('API_PREFIX', '/api');
-  app.setGlobalPrefix(apiPrefix);
-  
-  // Obter a porta da API
-  const port = configService.get('API_PORT', 3000);
-  
-  await app.listen(port);
-  console.log(`Aplicação rodando na porta ${port}`);
+  await app.listen(3000);
+  console.log(`Application is running on: ${await app.getUrl()}`);
 }
+
 bootstrap();
